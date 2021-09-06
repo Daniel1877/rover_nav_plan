@@ -1,0 +1,77 @@
+set instance punto0 points
+set instance punto1 points
+set instance punto2 points
+set instance marta rover
+set instance loc_cam_depth camera
+set instance nav_cam_depth camera
+
+set predicate (at punto0)
+set predicate (move-possible punto0 punto1)
+set predicate (move-possible punto1 punto2)
+set predicate (free marta)
+
+set function (= (distance punto0 punto1)10)
+set function (= (distance punto1 punto2)20)
+set function (= (battery marta) 20)
+set function (= (velocity marta) 2)
+set function (= (consum marta) 1)
+set function (= (capacity marta) 40)
+set function (= (recharge-rate marta) 2)
+set function (= (photo-energy marta) 5)
+
+set goal (and (photography punto0 nav_cam_depth)(photography punto0 loc_cam_depth))
+
+set goal (and (photography punto0 nav_cam_depth)(photography punto1 loc_cam_depth)(at punto1))
+
+
+set goal (and (photography punto0 nav_cam_depth)(at punto2))
+
+
+
+***********************************************************
+
+Problema PDDL completo
+
+***********************************************************
+
+set instance punto0 points
+set instance punto1 points
+set instance punto2 points
+set instance punto3 points
+set instance punto4 points
+set instance punto5 points
+set instance punto6 points
+
+set instance marta rover
+set instance loc_cam_depth camera
+set instance nav_cam_depth camera
+
+set predicate (at punto0)
+
+set predicate (move-possible punto0 punto1)
+set predicate (move-possible punto1 punto2)
+set predicate (move-possible punto2 punto3)
+set predicate (move-possible punto3 punto4)
+set predicate (move-possible punto4 punto5)
+set predicate (move-possible punto5 punto6)
+
+set predicate (free marta)
+
+set function (= (distance punto0 punto1)10)
+set function (= (distance punto1 punto2)20)
+set function (= (distance punto2 punto3) 20)
+set function (= (distance punto3 punto4) 7)
+set function (= (distance punto4 punto5) 18)
+set function (= (distance punto5 punto6) 25)
+
+set function (= (battery marta) 20)
+set function (= (velocity marta) 2)
+set function (= (consum marta) 1)
+set function (= (capacity marta) 40)
+set function (= (recharge-rate marta) 2)
+set function (= (photo-energy marta) 5)
+set function (= (calibration-energy marta) 10)
+
+set goal (and (recording punto0 nav_cam_depth)(photography punto2 loc_cam_depth)(photography punto3 nav_cam_depth)(calibration punto4 marta)(photography punto5 loc_cam_depth)(photography punto6 nav_cam_depth)(at punto6))
+
+set goal (and (photography punto3 nav_cam_depth)(calibration punto4 marta)(photography punto5 loc_cam_depth)(photography punto6 nav_cam_depth)(at punto6))

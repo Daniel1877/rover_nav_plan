@@ -1,0 +1,32 @@
+move:
+  ros__parameters:
+    plugins:
+      - plansys2_move_bt_node
+    waypoints: ["punto1", "punto2", "punto3", "punto4", "punto5", "punto6"]
+    waypoint_coords:
+      punto1: [0.5, 0.0, 0.0]
+      punto2: [1.0, 0.0, 0.0]
+      punto3: [1.5, 0.0, 0.0]
+      punto4: [2.0, 0.0, 0.0]
+      punto5: [2.5, 0.0, 0.0]
+      punto6: [3.0, 0.0, 0.0]
+
+recharge:
+  ros__parameters:
+    plugins:
+      - plansys2_recharge_bt_node
+
+photo:
+  ros__parameters:
+    plugins:
+      - rover_photo_bt_node
+
+record:
+  ros__parameters:
+    plugins:
+      - rover_record_bt_node
+
+calibration:
+  ros__parameters:
+    plugins:
+      - rover_calibration_bt_node

@@ -13,7 +13,7 @@ amcl:
     do_beamskip: false
     global_frame_id: "map"
     lambda_short: 0.1
-    laser_likelihood_max_dist: 2.0        #Maximum distance to do obstacle inflation on map, for use in likelihood_field model.
+    laser_likelihood_max_dist: 2.0
     laser_max_range: 100.0
     laser_min_range: -1.0
     laser_model_type: "likelihood_field"
@@ -23,8 +23,8 @@ amcl:
     odom_frame_id: "odom"
     pf_err: 0.05
     pf_z: 0.99
-    recovery_alpha_fast: 0.001
-    recovery_alpha_slow: 0.001
+    recovery_alpha_fast: 0.0
+    recovery_alpha_slow: 0.0
     resample_interval: 1
     robot_model_type: "differential"
     save_pose_rate: 0.5
@@ -40,11 +40,10 @@ amcl:
     scan_topic: scan
     set_initial_pose: True
     initial_pose:
-      x: -1.5  # Default world - x: -2.0
-      y: 0.5  #                 y: -0.457
+      x: -1.5
+      y: 0.5
       z: 0.0
       yaw: 0.0
-      initial_pose:
 
 amcl_map_client:
   ros__parameters:
@@ -60,13 +59,7 @@ bt_navigator:
     global_frame: map
     robot_base_frame: base_footprint
     odom_topic: /odom
-    #default_bt_xml_filename: "navigation.xml"
-    #plugin_lib_names:
-    #- nav2_pipeline_sequence_bt_node
-    #- nav2_controlador_bt_node
-    #- nav2_compute_path_to_pose_action_bt_node
-    #- nav2_follow_path_action_bt_node
-    default_bt_xml_filename: "navigate_w_replanning_and_recovery.xml"
+    default_bt_xml_filename: "navigate.xml"
     plugin_lib_names:
     - nav2_compute_path_to_pose_action_bt_node
     - nav2_follow_path_action_bt_node
@@ -110,62 +103,51 @@ controller_server:
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
       required_movement_radius: 0.5
-      movement_time_allowance: 10.0
+      movement_time_allowance: 100.0
+
     # Goal checker parameters
     goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.5
-      yaw_goal_tolerance: 0.5
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.25
       stateful: True
     # DWB parameters
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
-      #DWB parameters
       debug_trajectory_details: True
-      short_circuit_trajectory_evaluation: True
-      #XYTheta Iterator Parameters
-      vx_samples: 16
-      vy_samples: 1
-      vtheta_samples: 20
-      #Publisher Parameters
-      #publish_cost_grid_pc: True
-      #marker_lifetime: 5.0
-      #Kinematic Parameters
       min_vel_x: 0.0
       min_vel_y: 0.0
-      max_vel_x: 0.26
+      max_vel_x: 0.67
       max_vel_y: 0.0
-      max_vel_theta: 1.0
+      max_vel_theta: 2.0
       min_speed_xy: 0.0
-      max_speed_xy: 0.26
+      max_speed_xy: 0.5
       min_speed_theta: 0.0
-      acc_lim_x: 2.5
-      acc_lim_y: 0.0
-      acc_lim_theta: 3.2
-      decel_lim_x: -2.5
-      decel_lim_y: 0.0
-      decel_lim_theta: -3.2
-      #Standard Trajectpry Generator Parameters
-      sim_time: 1.5
-      #linear_granularity: 0.05
-      #angular_granularity: 0.025
-      discretize_by_time: True
-      time_granularity: 0.5
       # Add high threshold velocity for turtlebot 3 issue.
       # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
-      min_x_velocity_threshold: 0.01
-      min_y_velocity_threshold: 0.0
-      min_theta_velocity_threshold: 0.001
+      acc_lim_x: 2.5
+      acc_lim_y: 2.5
+      acc_lim_theta: 3.2
+      decel_lim_x: -2.5
+      decel_lim_y: -2.5
+      decel_lim_theta: -3.2
+      vx_samples: 20
+      vy_samples: 20
+      vtheta_samples: 20
+      sim_time: 1.7
+      linear_granularity: 0.05
+      angular_granularity: 0.025
       transform_tolerance: 0.2
-      xy_goal_tolerance: 0.5
+      xy_goal_tolerance: 0.25
       trans_stopped_velocity: 0.25
+      short_circuit_trajectory_evaluation: True
       stateful: True
-
+      
       critics: ["RotateToGoal", "Oscillation", "ObstacleFootprint", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
       PathAlign.scale: 0.0
-      PathAlign.forward_point_distance: 0.1
+      PathAlign.forward_point_distance: 0.4
       GoalAlign.scale: 0.0
-      GoalAlign.forward_point_distance: 0.1
+      GoalAlign.forward_point_distance: 0.4
       PathDist.scale: 32.0
       GoalDist.scale: 24.0
       RotateToGoal.scale: 32.0
@@ -184,43 +166,20 @@ local_costmap:
       global_frame: odom
       robot_base_frame: base_footprint
       use_sim_time: True
-      rolling_window: True
-      width: 3
-      height: 3
+      rolling_window: true
+      width: 5.0
+      height: 5.0
       resolution: 0.05
-      #robot_radius: 0.22
       footprint_padding: 0.02
       footprint: "[[0.45, 0.4], [0.45, -0.4], [-0.45, -0.4], [-0.45, 0.4]]"
 
-    #  plugins: ["obstacle_layer", "voxel_layer", "inflation_layer"]
-      plugins: ["voxel_layer", "inflation_layer"]
-
+      plugins: ["voxel_layer", "obstacle_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.55
-
-    #  obstacle_layer:
-    #    plugin: "nav2_costmap_2d::ObstacleLayer"
-    #    enabled: True
-    #    observation_sources: scan
-    #    scan:
-    #      topic: /scan
-    #      sensor_frame: link_lidar
-    #      max_obstacle_height: 2.0
-    #      clearing: True
-    #      marking: True
-    #      data_type: "LaserScan"
-
-      voxel_layer:
-        plugin: nav2_costmap_2d::VoxelLayer
+        cost_scaling_factor: 2.0
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
-        publish_voxel_map: True
-        origin_z: 0.0
-        z_resolution: 0.05
-        z_voxels: 16
-        max_obstacle_height: 2.0
-        mark_threshold: 0
         observation_sources: scan
         scan:
           topic: /scan
@@ -228,22 +187,22 @@ local_costmap:
           clearing: True
           marking: True
           data_type: "LaserScan"
-
-    #    observation_sources: pointcloud
-    #    pointcloud:
-    #      topic: /loc_cam_depth/points
-    #      sensor_frame: link_loc_cam
-    #      max_obstacle_height: 2.0
-    #      clearing: True
-    #      marking: True
-    #      data_type: "PointCloud2"
-    #    pointcloud2:
-    #      topic: /nav_cam_depth/points
-    #      sensor_frame: link_nav_cam
-    #      max_obstacle_height: 2.0
-    #      clearing: True
-    #      marking: True
-    #      data_type: "PointCloud2"
+      voxel_layer:
+        plugin: "nav2_costmap_2d::VoxelLayer"
+        enabled: True
+        publish_voxel_map: True
+        origin_z: 0.0
+        z_resolution: 0.05
+        z_voxels: 16
+        max_obstacle_height: 2.0
+        mark_threshold: 0
+        observation_sources: pointcloud
+        pointcloud:
+          topic: /loc_cam_depth/points
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "PointCloud2"
 
       always_send_full_costmap: True
   local_costmap_client:
@@ -260,13 +219,15 @@ global_costmap:
       publish_frequency: 1.0
       global_frame: map
       robot_base_frame: base_footprint
+      #width: 10
+      #height: 10
       use_sim_time: True
-      #robot_radius: 0.22
       footprint_padding: 0.02
       footprint: "[[0.45, 0.4], [0.45, -0.4], [-0.45, -0.4], [-0.45, 0.4]]"
       resolution: 0.05
+      track_unknown_space: true
 
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "voxel_layer", "inflation_layer"]
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
@@ -282,8 +243,24 @@ global_costmap:
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.55
+        cost_scaling_factor: 10.0
+        inflation_radius: 0.67
+      voxel_layer:
+        plugin: "nav2_costmap_2d::VoxelLayer"
+        enabled: True
+        publish_voxel_map: True
+        origin_z: 0.0
+        z_resolution: 0.05
+        z_voxels: 16
+        max_obstacle_height: 2.0
+        mark_threshold: 0
+        observation_sources: pointcloud
+        pointcloud:
+          topic: /loc_cam_depth/points
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "PointCloud2"
 
       always_send_full_costmap: True
   global_costmap_client:
@@ -301,7 +278,7 @@ map_server:
 map_saver:
   ros__parameters:
     use_sim_time: True
-    save_map_timeout: 5000
+    save_map_timeout: 10000
     free_thresh_default: 0.25
     occupied_thresh_default: 0.65
 
@@ -311,12 +288,23 @@ planner_server:
     use_sim_time: True
     planner_plugins: ["GridBased"]
     GridBased:
-      plugin: "nav2_navfn_planner/NavfnPlanner"
-      tolerance: 0.5
-      use_astar: false
-      allow_unknown: true
-
-
+      plugin: "smac_planner/SmacPlanner"
+      tolerance: 0.5                    # tolerance for planning if unable to reach exact pose, in meters, for 2D node
+      downsample_costmap: false         # whether or not to downsample the map
+      downsampling_factor: 1            # multiplier for the resolution of the costmap layer (e.g. 2 on a 5cm costmap would be 10cm)
+      allow_unknown: false              # allow traveling in unknown space
+      max_iterations: -1                # maximum total iterations to search for before failing
+      max_on_approach_iterations: 1000  # maximum number of iterations to attempt to reach goal once in tolerance, 2D only
+      max_planning_time: 2.0            # max time in seconds for planner to plan, smooth, and upsample. Will scale maximum smoothing and upsampling times based on remaining time after planning.
+      smooth_path: false                # Whether to smooth searched path
+      motion_model_for_search: "DUBIN"  # 2D Moore, Von Neumann; SE2 Dubin, Redds-Shepp
+      angle_quantization_bins: 72       # For SE2 node: Number of angle bins for search, must be 1 for 2D node (no angle search)
+      minimum_turning_radius: 0.20      # For SE2 node & smoother: minimum turning radius in m of path / vehicle
+      reverse_penalty: 2.1              # For Reeds-Shepp model: penalty to apply if motion is reversing, must be => 1
+      change_penalty: 0.20              # For SE2 node: penalty to apply if motion is changing directions, must be >= 0
+      non_straight_penalty: 1.05        # For SE2 node: penalty to apply if motion is non-straight, must be => 1
+      cost_penalty: 1.3                 # For SE2 node: penalty to apply to higher cost zones
+      
 planner_server_rclcpp_node:
   ros__parameters:
     use_sim_time: True
