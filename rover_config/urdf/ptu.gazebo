@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<robot name="ptu" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <gazebo>
+
+    <plugin name="ptu_gazebo_joint_plugin" filename="librover_gazebo_joint_plugin.so">
+<!--  <ros>
+        <namespace>/marta</namespace>
+      </ros>
+ -->  
+      <update_rate>100.0</update_rate>
+      <position_pids>
+      </position_pids>
+      <velocity_pids>
+        <PAN>50.0 0.1 0.0</PAN>
+        <TLT>50.0 0.1 0.0</TLT>
+      </velocity_pids>
+    </plugin>
+
+  	<plugin name="gazebo_ros_joint_state_publisher_ptu"
+          filename="libgazebo_ros_joint_state_publisher.so">
+        <ros>
+          <remapping>joint_states:=joint_states</remapping>
+        </ros>
+        <update_rate>100</update_rate>
+        <joint_name>joint_PAN</joint_name>
+        <joint_name>joint_TLT</joint_name>
+      </plugin>
+
+  </gazebo>
+  
+  <!-- LINKS -->
+  <gazebo reference="link_mast">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="link_pan">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_tilt">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+</robot>

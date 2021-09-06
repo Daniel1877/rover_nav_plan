@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+  <xacro:macro name="imu" params="parent_link *origin">
+    <xacro:include filename="$(find rover_config)/urdf/stim300.gazebo" />
+
+    <joint name="joint_imu" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="link_imu"/>
+      <xacro:insert_block name="origin" />
+    </joint>
+
+    <!-- STIM300 Visual -->
+    <link name="link_imu">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.0386 0.0448 0.0215"/>
+        </geometry>
+      </visual>
+    </link>
+  </xacro:macro>
+</robot>

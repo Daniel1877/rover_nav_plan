@@ -1,0 +1,267 @@
+<?xml version="1.0"?>
+<robot name="marta" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <gazebo>
+    <plugin name="rover_gazebo_joint_plugin" filename="librover_gazebo_joint_plugin.so">
+<!--  <ros>
+        <namespace>/marta</namespace>
+      </ros>
+ -->
+      <update_rate>100.0</update_rate>
+      <position_pids>
+        <DEP>350.0 0.1 0.0</DEP>
+        <STR>20.0 0.1 0.0</STR>
+      </position_pids>
+      <velocity_pids>
+        <DRV>0.0 0.1 0.0</DRV>
+      </velocity_pids>
+    </plugin>
+
+    <plugin name='diff_drive' filename='libgazebo_ros_diff_drive.so'>
+
+      <ros>
+        <argument>cmd_vel:=cmd_vel</argument>
+        <argument>odom:=odom</argument>
+      </ros>
+
+      <update_rate>100</update_rate>
+
+      <!-- Number of wheel pairs -->
+      <num_wheel_pairs>3</num_wheel_pairs>
+
+      <!-- wheels0-1-2 -->
+      <left_joint>joint_DRV_LF</left_joint>
+      <right_joint>joint_DRV_RF</right_joint>
+
+      <left_joint>joint_DRV_LM</left_joint>
+      <right_joint>joint_DRV_RM</right_joint>
+
+      <left_joint>joint_DRV_LR</left_joint>
+      <right_joint>joint_DRV_RR</right_joint>
+
+      <!-- kinematics -->
+
+      <wheel_separation>0.7575</wheel_separation>
+      <wheel_diameter>0.1425</wheel_diameter>
+
+      <wheel_separation>0.7575</wheel_separation>
+      <wheel_diameter>0.1425</wheel_diameter>
+
+      <wheel_separation>0.7575</wheel_separation>
+      <wheel_diameter>0.1425</wheel_diameter>
+      <!-- limits -->
+      <max_wheel_torque>20</max_wheel_torque>
+      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+
+      <!-- output -->
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>false</publish_wheel_tf>
+
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+
+    </plugin>
+    <!--
+
+    <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
+      <ros>
+        <namespace>marta</namespace>
+      </ros>
+      <body_name>base_link</body_name>
+      <frame_name>map</frame_name>
+      <body_tf_name>odom</body_tf_name>
+      <update_rate>20.0</update_rate>
+      <xyz_offsets>0 0 0</xyz_offsets>
+      <rpy_offsets>0 0 0</rpy_offsets>
+      <gaussian_noise>0.0</gaussian_noise>
+    </plugin>
+    <plugin name="turtlebot3_diff_drive" filename="libgazebo_ros_diff_drive.so">
+
+      <update_rate>30</update_rate>
+
+      <left_joint>joint_DRV_LM</left_joint>
+      <right_joint>joint_DRV_RM</right_joint>
+
+      <wheel_separation>0.7575</wheel_separation>
+      <wheel_diameter>0.1425</wheel_diameter>
+
+      <max_wheel_torque>20</max_wheel_torque>
+      <max_wheel_acceleration>1.0</max_wheel_acceleration>
+
+      <command_topic>cmd_vel</command_topic>
+
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>false</publish_wheel_tf>
+
+      <odometry_topic>odom</odometry_topic>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+
+    </plugin>
+-->
+    <plugin name="gazebo_ros_joint_state_publisher"
+        filename="libgazebo_ros_joint_state_publisher.so">
+      <ros>
+        <!-- <namespace>/marta</namespace> -->
+        <remapping>joint_states:=joint_states</remapping>
+      </ros>
+      <update_rate>100</update_rate>
+      <joint_name>joint_bogie_LFB</joint_name>
+      <joint_name>joint_bogie_RFB</joint_name>
+      <joint_name>joint_bogie_MRB</joint_name>
+      <joint_name>joint_DEP_LF</joint_name>
+      <joint_name>joint_DEP_RF</joint_name>
+      <joint_name>joint_DEP_LM</joint_name>
+      <joint_name>joint_DEP_RM</joint_name>
+      <joint_name>joint_DEP_LR</joint_name>
+      <joint_name>joint_DEP_RR</joint_name>
+      <joint_name>joint_DRV_LF</joint_name>
+      <joint_name>joint_DRV_RF</joint_name>
+      <joint_name>joint_DRV_LM</joint_name>
+      <joint_name>joint_DRV_RM</joint_name>
+      <joint_name>joint_DRV_LR</joint_name>
+      <joint_name>joint_DRV_RR</joint_name>
+      <joint_name>joint_STR_LF</joint_name>
+      <joint_name>joint_STR_RF</joint_name>
+      <joint_name>joint_STR_LM</joint_name>
+      <joint_name>joint_STR_RM</joint_name>
+      <joint_name>joint_STR_LR</joint_name>
+      <joint_name>joint_STR_RR</joint_name>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="base_link">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_bogie_LFB">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_bogie_RFB">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_bogie_MRB">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_STR_LF">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_STR_RF">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_STR_RM">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_STR_LM">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_STR_RR">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_STR_LR">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_DRV_LF">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_DRV_RF">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_DRV_RM">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_DRV_LM">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_DRV_RR">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_DRV_LR">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Gray</material>
+  </gazebo>
+
+  <gazebo reference="link_DEP_LF">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="link_DEP_RF">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="link_DEP_RM">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="link_DEP_LM">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="link_DEP_RR">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="link_DEP_LR">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+</robot>

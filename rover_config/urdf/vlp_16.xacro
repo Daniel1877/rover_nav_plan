@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+  <xacro:macro name="lidar" params="parent_link *origin *origin_slam">
+    <xacro:include filename="$(find rover_config)/urdf/vlp_16.gazebo" />
+
+    <joint name="joint_lidar" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="link_lidar"/>
+      <xacro:insert_block name="origin" />
+    </joint>
+
+    <!-- Model of Velodyne VLP-16 LiDAR -->
+    <link name="link_lidar">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.0717" radius="0.05165"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.0717" radius="0.05165"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Model of SLAM VLP-16 LiDAR -->
+    <joint name="joint_slam_lidar" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="link_slam_lidar"/>
+      <xacro:insert_block name="origin_slam" />
+    </joint>
+
+    <link name="link_slam_lidar">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.0717" radius="0.05165"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.0717" radius="0.05165"/>
+        </geometry>
+      </collision>
+    </link>
+
+  </xacro:macro>
+</robot>

@@ -1,0 +1,487 @@
+<?xml version="1.0"?>
+<robot name="marta" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- SENSOR CONFIGURATION -->
+  <xacro:arg name="use_lidar"    default="true" />
+  <xacro:arg name="use_imu"      default="true" />
+  <xacro:arg name="use_gnss"     default="true" />
+  <xacro:arg name="use_ptu"      default="true" />
+  <xacro:arg name="use_loc_cam"  default="true" />
+
+  <xacro:property name="use_lidar"    value="$(arg use_lidar)" />
+  <xacro:property name="use_imu"      value="$(arg use_imu)" />
+  <xacro:property name="use_gnss"     value="$(arg use_gnss)" />
+  <xacro:property name="use_ptu"      value="$(arg use_ptu)" />
+  <xacro:property name="use_loc_cam"  value="$(arg use_loc_cam)" />
+
+  <!-- PHYSICS -->
+  <xacro:property name="damping" value="2" />
+  <xacro:property name="friction" value="0.1" />
+
+  <!-- CHASSIS -->
+  <xacro:property name="chassis_mass" value="10.0" />
+  <xacro:property name="chassis_x" value="0.569" />
+  <xacro:property name="chassis_y" value="0.48" />
+  <xacro:property name="chassis_z" value="0.243" />
+  <!--xacro:property name="chassis_z" value="0.343" /-->
+
+  <!-- SIDE BOGIE -->
+  <!-- TODO: FIX INTERTIA and mass. Mass
+  values were multiplied by 10 as the model exploded otherwise due to low inertia.
+  The real values are commented out.-->
+  <!-- TODO: STR and DEP INERTIA and mass are not correct anymore  -->
+
+  <!-- <xacro:property name="side_bogie_mass" value="0.15" /> -->
+  <xacro:property name="side_bogie_mass" value="1.5" />
+  <xacro:property name="side_bogie_l" value="0.26" />
+  <xacro:property name="side_bogie_r" value="0.0125" />
+  <xacro:property name="side_bogie_pos_x" value="0.206" />
+  <xacro:property name="side_bogie_pos_y" value="0.266" />
+  <xacro:property name="side_bogie_pos_z" value="-0.015" />
+
+  <!-- REAR BOGIE -->
+  <!-- <xacro:property name="rear_bogie_mass" value="0.4" /> -->
+  <xacro:property name="rear_bogie_mass" value="4.0" />
+  <xacro:property name="rear_bogie_l" value="0.5815" />
+  <xacro:property name="rear_bogie_r" value="0.0125" />
+  <xacro:property name="rear_bogie_pos_x" value="-0.316" />
+  <xacro:property name="rear_bogie_pos_y" value="0" />
+  <xacro:property name="rear_bogie_pos_z" value="-0.015" />
+
+  <xacro:property name="dep_x" value="0.056" />
+  <xacro:property name="dep_y" value="0.088" />
+  <xacro:property name="dep_z" value="0.0855" />
+
+  <!-- DEPLOYMENT JOINT -->
+  <!-- <xacro:property name="dep_mass" value="0.57" /> -->
+  <xacro:property name="dep_mass" value="5.7" />
+
+  <xacro:property name="side_dep_pos_front_x" value="0.14" />
+  <xacro:property name="side_dep_pos_mid_x" value="0.12" />
+  <xacro:property name="side_dep_pos_y" value="-0.01" />
+  <xacro:property name="side_dep_pos_z" value="0.0685" />
+
+  <xacro:property name="rear_dep_pos_x" value="0.335" />
+  <xacro:property name="rear_dep_pos_y" value="-0.01" />
+  <xacro:property name="rear_dep_pos_z" value="0.0325" />
+
+  <xacro:property name="str_x" value="0.079" />
+  <xacro:property name="str_y" value="0.1015" />
+  <xacro:property name="str_z" value="0.0435" />
+  <xacro:property name="str_x_link_diff" value="0.017" />
+
+  <!-- STEERING JOINT -->
+  <!-- <xacro:property name="str_mass" value="0.025" /> -->
+  <xacro:property name="str_mass" value="0.25" />
+  <xacro:property name="str_pos_short_x" value="0.02" />
+  <xacro:property name="str_pos_long_x" value="0.045" />
+  <xacro:property name="str_pos_y" value="0.031" />
+  <xacro:property name="str_pos_z" value="0.0305" />
+
+  <!-- WHEEL -->
+  <!-- <xacro:property name="wheel_mass" value="0.23" /> -->
+  <xacro:property name="wheel_mass" value="2.3" />
+  <xacro:property name="wheel_x" value="0.0" />
+  <xacro:property name="wheel_y" value="0.0" />
+  <xacro:property name="wheel_z" value="-0.0885" />
+
+  <xacro:property name="wheel_l" value="0.06" />
+  <xacro:property name="wheel_r" value="${0.1425 / 2}" />
+
+  <!-- DRIVE LIMITS -->
+  <xacro:property name="limit_drive_effort" value="1000.0" />
+  <xacro:property name="limit_drive_velocity" value="1.0" />
+  <xacro:property name="limit_steer_effort" value="1000.0" />
+  <xacro:property name="limit_steer_lower" value="${-100*pi/180}" />
+  <xacro:property name="limit_steer_upper" value="${ 100*pi/180}" />
+  <xacro:property name="limit_steer_velocity" value="1.0" />
+
+  <!-- BOGIE ROTATION LIMITS -->
+  <xacro:property name="bogie_lower" value="${-pi / 4}" />
+  <xacro:property name="bogie_upper" value="${ pi / 4}" />
+
+  <!-- Import all Gazebo-customization elements, including Gazebo colors and plugins -->
+  <xacro:include filename="$(find rover_config)/urdf/marta.gazebo" />
+
+  <!-- CHASSIS DEFINITION (must be called base_link)-->
+  <link name="base_link">
+    <collision>
+      <origin xyz="0 0 ${chassis_z / 2 - 0.03}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${chassis_x} ${chassis_y} ${chassis_z}"/>
+      </geometry>
+    </collision>
+    <!--  Inertia is defined in base_link_inertia as KDL does not support inertia in base_links -->
+    <visual>
+      <origin xyz="0 0 ${chassis_z / 2 - 0.03}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${chassis_x} ${chassis_y} ${chassis_z}"/>
+      </geometry>
+     <!-- <material name="Cyan">
+        <color rgba="0 1.0 1.0 1.0"/>
+      </material> -->
+    </visual>
+  </link>
+
+  <link name="base_footprint" />
+
+	<joint name="base_joint" type="fixed">
+		<parent link="base_footprint"/>
+		<child link="base_link"/>
+    <origin xyz="0.0 0.0 0.1953182827663013" rpy="0 0 0"/>
+	</joint>
+
+  <!-- Inertia Dummy Link -->
+  <link name="base_link_inertia">
+    <inertial>
+       <mass value="${chassis_mass}"/>
+        <inertia
+            ixx="${chassis_mass / 12.0 * (chassis_y * chassis_z / 12)}"
+            izz="${chassis_mass / 12.0 * (chassis_x * chassis_z / 12)}"
+            iyy="${chassis_mass / 12.0 * (chassis_x * chassis_z / 12)}"
+            ixy="0"
+            ixz="0"
+            iyz="0"/>
+    </inertial>
+  </link>
+
+  <joint name="joint_inertia" type="fixed">
+    <parent link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <child link="base_link_inertia"/>
+  </joint>
+
+  <!-- BOGIE DEFINITION -->
+  <xacro:macro name="bogie" params="position bogie_mass bogie_r bogie_l dep_pos_z dep_rot_y *origin_bogie">
+    <xacro:property name="bogie_link" value="link_bogie_${position}" />
+
+    <joint name="joint_bogie_${position}" type="revolute">
+      <parent link="base_link"/>
+      <child link="link_bogie_${position}"/>
+      <xacro:insert_block name="origin_bogie" />
+      <limit effort="0" lower="${bogie_lower}" upper="${bogie_upper}" velocity="0"/>
+      <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="link_bogie_${position}">
+      <inertial>
+        <mass value="${bogie_mass}"/>
+        <inertia
+              ixx="${bogie_mass /  2.0 *  bogie_r * bogie_r}"
+              iyy="${bogie_mass / 12.0 * (3 * bogie_r * bogie_r + bogie_l * bogie_l)}"
+              izz="${bogie_mass / 12.0 * (3 * bogie_r * bogie_r + bogie_l * bogie_l)}"
+              ixy="0"
+              ixz="0"
+              iyz="0"/>
+      </inertial>
+
+      <!-- BAR -->
+      <collision>
+        <origin xyz="0 0 0" rpy="0 ${pi / 2} 0"/>
+        <geometry>
+          <cylinder length="${bogie_l}" radius="${bogie_r}"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 ${pi / 2} 0"/>
+        <geometry>
+          <cylinder length="${bogie_l}" radius="${bogie_r}"/>
+        </geometry>
+      </visual>
+
+      <!-- DEPLOYMENT MOTORS -->
+      <collision>
+        <origin xyz="${bogie_l/2} -0.0325 ${dep_pos_z}" rpy="0 ${dep_rot_y} 0"/>
+        <geometry>
+          <box size="${dep_x} ${dep_y} ${dep_z}"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="${bogie_l/2} -0.0325 ${dep_pos_z}" rpy="0 ${dep_rot_y} 0"/>
+        <geometry>
+          <box size="${dep_x} ${dep_y} ${dep_z}"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="${-bogie_l/2} -0.0325 ${dep_pos_z}" rpy="0 ${dep_rot_y} 0"/>
+        <geometry>
+          <box size="${dep_x} ${dep_y} ${dep_z}"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="${-bogie_l/2} -0.0325 ${dep_pos_z}" rpy="0 ${dep_rot_y} 0"/>
+        <geometry>
+          <box size="${dep_x} ${dep_y} ${dep_z}"/>
+        </geometry>
+      </visual>
+
+    </link>
+  </xacro:macro>
+
+  <!-- Definition for a wheel assembly -->
+  <!-- side_sign inverts some geometry values and needs to be 1 for left side assemblies and -1 for right side assemblies -->
+  <xacro:macro name="wheel_assembly" params="position bogie_name str_pos_x side_sign *origin_DEP *origin_STR">
+
+    <!-- DEPLOYMENT JOINT -->
+    <joint name="joint_DEP_${position}" type="revolute">
+      <parent link="link_bogie_${bogie_name}"/>
+      <child link="link_DEP_${position}"/>
+      <limit effort="${limit_steer_effort}" lower="${limit_steer_lower}" upper="${limit_steer_upper}" velocity="${limit_steer_velocity}"/>
+      <xacro:insert_block name="origin_DEP" />
+      <axis xyz="0 0 1"/>
+      <dynamics damping="${damping}" friction="${friction}"/>
+    </joint>
+
+    <!-- DEPLOYMENT LINK-->
+    <link name="link_DEP_${position}">
+      <inertial>
+          <mass value="${dep_mass}"/>
+          <inertia
+              ixx="${dep_mass / 12.0 * (dep_y * dep_z / 2)}"
+              iyy="${dep_mass / 12.0 * (dep_x * dep_z / 2)}"
+              izz="${dep_mass / 12.0 * (dep_x * dep_y / 2)}"
+              ixy="0"
+              ixz="0"
+              iyz="0"/>
+      </inertial>
+
+      <!-- STEERING MOTOR -->
+      <collision>
+        <origin xyz="${str_pos_x} ${str_pos_y-str_y/2} ${str_pos_z * side_sign}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${str_x} ${str_y} ${str_z}"/>
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="${str_pos_x} ${str_pos_y-str_y/2} ${str_pos_z * side_sign}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${str_x} ${str_y} ${str_z}"/>
+        </geometry>
+      </visual>
+    </link>
+
+    <!-- STEERING JOINT -->
+    <joint name="joint_STR_${position}" type="revolute">
+      <parent link="link_DEP_${position}"/>
+      <child link="link_STR_${position}"/>
+      <limit effort="${limit_steer_effort}" lower="${limit_steer_lower}" upper="${limit_steer_upper}" velocity="${limit_steer_velocity}"/>
+      <xacro:insert_block name="origin_STR" />
+      <axis xyz="0 0 1"/>
+      <dynamics damping="${damping}" friction="${friction}"/>
+    </joint>
+
+    <!-- STEERING LINK -->
+    <link name="link_STR_${position}">
+      <inertial>
+          <mass value="${str_mass}"/>
+          <inertia
+              ixx="${str_mass / 12.0 * (str_y * str_z / 2)}"
+              iyy="${str_mass / 12.0 * (str_x * str_z / 2)}"
+              izz="${str_mass / 12.0 * (str_x * str_y / 2)}"
+              ixy="0"
+              ixz="0"
+              iyz="0"/>
+      </inertial>
+
+      <!-- WHEEL BRACKET -->
+      <collision>
+        <origin xyz="0.0 ${0.049 * side_sign} -0.0545" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.044 0.006 0.109"/>
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="0.0 ${0.049 * side_sign} -0.0545" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.044 0.006 0.109"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0.0 ${0.013 * side_sign} -0.00325" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.044 0.078 0.0065"/>
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="0.0 ${0.013 * side_sign} -0.00325" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.044 0.078 0.0065"/>
+        </geometry>
+      </visual>
+    </link>
+
+    <!-- DRIVING JOINT -->
+    <joint name="joint_DRV_${position}" type="continuous">
+      <parent link="link_STR_${position}"/>
+      <child link="link_DRV_${position}"/>
+      <limit effort="${limit_drive_effort}" velocity="${limit_drive_velocity}"/>
+      <origin xyz="${wheel_x} ${wheel_y * side_sign} ${wheel_z}" rpy="${-pi/2} 0 0"/>
+      <axis xyz="0 0 1"/>
+      <dynamics damping="${damping}" friction="${friction}"/>
+    </joint>
+
+    <!-- DRIVING LINK -->
+    <link name="link_DRV_${position}">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="${wheel_l}" radius="${wheel_r}"/>
+        </geometry>
+      </collision>
+      <inertial>
+          <mass value="${wheel_mass}"/>
+          <inertia
+              ixx="${wheel_mass / 12.0 * (3 * wheel_r * wheel_r + wheel_l * wheel_l)}"
+              iyy="${wheel_mass / 12.0 * (3 * wheel_r * wheel_r + wheel_l * wheel_l)}"
+              izz="${wheel_mass / 2.0 * wheel_r * wheel_r}"
+              ixy="0"
+              ixz="0"
+              iyz="0"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="${wheel_l}" radius="${wheel_r}"/>
+        </geometry>
+      </visual>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.104" radius="0.0255"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.104" radius="0.0255"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <transmission name="transmission_STR_${position}">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint_STR_${position}">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="motor_STR_${position}">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <transmission name="transmission_DRV_${position}">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint_DRV_${position}">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="motor_DRV_${position}">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
+  <!-- Define all wheel assemblies and set their positions -->
+  <!-- LEFT BOGIE  -->
+  <xacro:property name="side_bogie_left_name" value="LFB" />
+
+  <xacro:bogie position="${side_bogie_left_name}" bogie_mass="${side_bogie_mass}" bogie_r="${side_bogie_r}" bogie_l="${side_bogie_l}" dep_pos_z="${side_dep_pos_z-dep_z/2}" dep_rot_y="${0.0}">
+    <origin xyz="${side_bogie_pos_x} ${side_bogie_pos_y} ${side_bogie_pos_z}" rpy="${- pi / 2} 0 0"/>
+  </xacro:bogie>
+
+  <xacro:wheel_assembly position="LF" bogie_name="${side_bogie_left_name}" str_pos_x="${str_pos_short_x-str_x_link_diff}" side_sign="1">
+    <origin xyz="${side_dep_pos_front_x} ${side_dep_pos_y} ${side_dep_pos_z}" rpy="0 0 0"/>
+    <origin xyz="${str_pos_short_x} ${str_pos_y} ${str_pos_z}" rpy="${pi / 2} 0 0"/>
+  </xacro:wheel_assembly>
+
+  <xacro:wheel_assembly position="LM" bogie_name="${side_bogie_left_name}" str_pos_x="${-(str_pos_long_x-str_x_link_diff)}" side_sign="1">
+    <origin xyz="-${side_dep_pos_mid_x} ${side_dep_pos_y} ${side_dep_pos_z}" rpy="0 0 0"/>
+    <origin xyz="-${str_pos_long_x} ${str_pos_y} ${str_pos_z}" rpy="${pi / 2} 0 0"/>
+  </xacro:wheel_assembly>
+
+  <!-- RIGHT BOGIE  -->
+  <xacro:property name="side_bogie_right_name" value="RFB" />
+
+  <xacro:bogie position="${side_bogie_right_name}" bogie_mass="${side_bogie_mass}" bogie_r="${side_bogie_r}" bogie_l="${side_bogie_l}" dep_pos_z="-${side_dep_pos_z-dep_z/2}" dep_rot_y="${0.0}">
+    <origin xyz="${side_bogie_pos_x} -${side_bogie_pos_y} ${side_bogie_pos_z}" rpy="${- pi / 2} 0 0"/>
+  </xacro:bogie>
+
+  <xacro:wheel_assembly position="RF" bogie_name="${side_bogie_right_name}" str_pos_x="${str_pos_short_x-str_x_link_diff}" side_sign="-1">
+    <origin xyz="${side_dep_pos_front_x} ${side_dep_pos_y} -${side_dep_pos_z}" rpy="0 0 0"/>
+    <origin xyz="${str_pos_short_x} ${str_pos_y} -${str_pos_z}" rpy="${pi / 2} 0 0"/>
+  </xacro:wheel_assembly>
+
+  <xacro:wheel_assembly position="RM" bogie_name="${side_bogie_right_name}" str_pos_x="${-(str_pos_long_x-str_x_link_diff)}" side_sign="-1">
+    <origin xyz="-${side_dep_pos_mid_x} ${side_dep_pos_y} -${side_dep_pos_z}" rpy="0 0 0"/>
+    <origin xyz="-${str_pos_long_x} ${str_pos_y} -${str_pos_z}" rpy="${pi / 2} 0 0"/>
+  </xacro:wheel_assembly>
+
+  <!-- REAR BOGIE  -->
+  <xacro:property name="bogie_rear_name" value="MRB" />
+
+  <xacro:bogie position="${bogie_rear_name}" bogie_mass="${rear_bogie_mass}" bogie_r="${rear_bogie_r}" bogie_l="${rear_bogie_l}" dep_pos_z="-${rear_dep_pos_z}" dep_rot_y="${-pi/2}">
+    <origin xyz="${rear_bogie_pos_x} ${rear_bogie_pos_y} ${rear_bogie_pos_z}" rpy="${- pi / 2} 0 ${- pi / 2}"/>
+  </xacro:bogie>
+
+  <xacro:wheel_assembly position="LR" bogie_name="${bogie_rear_name}" str_pos_x="${-(str_pos_short_x-str_x_link_diff)}" side_sign="1">
+    <origin xyz="-${rear_dep_pos_x} ${rear_dep_pos_y} -${rear_dep_pos_z}" rpy="0 ${- pi / 2} 0"/>
+    <origin xyz="-${str_pos_short_x} ${str_pos_y} ${str_pos_z}" rpy="${pi / 2} 0 0"/>
+  </xacro:wheel_assembly>
+
+  <xacro:wheel_assembly position="RR" bogie_name="${bogie_rear_name}" str_pos_x="${-(str_pos_short_x-str_x_link_diff)}" side_sign="-1">
+    <origin xyz="${rear_dep_pos_x} ${rear_dep_pos_y} -${rear_dep_pos_z}" rpy="0 ${- pi / 2} 0"/>
+    <origin xyz="-${str_pos_short_x} ${str_pos_y} -${str_pos_z}" rpy="${pi / 2} 0 0"/>
+  </xacro:wheel_assembly>
+
+  <!-- Sensors -->
+  <!-- PTU w/ Navigation Cam -->
+  <xacro:if value="${use_ptu}">
+    <xacro:include filename="$(find rover_config)/urdf/ptu.xacro" />
+
+    <xacro:ptu parent_link="base_link">
+      <origin xyz="0.187 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    </xacro:ptu>
+  </xacro:if>
+
+  <!-- Localization Cam -->
+  <xacro:if value="${use_loc_cam}">
+    <xacro:include filename="$(find rover_config)/urdf/bb2.xacro" />
+
+    <xacro:bb2 name="loc_cam" parent_link="base_link">
+        <origin rpy="0 ${pi/6} 0" xyz="${chassis_x/2} 0.0 ${chassis_z/2 + 0.2}"/>
+    </xacro:bb2>
+  </xacro:if>
+
+  <xacro:include filename="$(find rover_config)/urdf/vlp_16.xacro"/>
+
+  <!-- LIDAR -->
+  <xacro:if value="${use_lidar}">
+    <xacro:include filename="$(find rover_config)/urdf/vlp_16.xacro"/>
+
+    <xacro:lidar parent_link="base_link">
+      <origin xyz="0 0  ${chassis_z + 0.006}"/>
+      <origin_slam xyz="0 0  ${chassis_z/2 - 0.03}"/>
+    </xacro:lidar>
+  </xacro:if>
+
+  <!-- IMU
+  <xacro:if value="${use_imu}">
+    <xacro:include filename="$(find rover_config)/urdf/stim300.xacro"/>
+
+    <xacro:imu parent_link="base_link">
+      <origin xyz="0.09 0  0"/>
+    </xacro:imu>
+  </xacro:if> -->
+
+  <!-- GNSS
+  <xacro:if value="${use_gnss}">
+    <xacro:include filename="$(find rover_config)/urdf/gnss.xacro"/>
+
+    <xacro:gnss parent_link="base_link">
+      <origin xyz="0.0 0.15  ${chassis_z-0.02}"/>
+    </xacro:gnss>
+  </xacro:if> -->
+
+</robot>

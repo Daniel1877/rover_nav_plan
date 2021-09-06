@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+  <xacro:macro name="bb2" params="name parent_link *origin_cam">
+    <xacro:include filename="$(find rover_config)/urdf/bb2.gazebo" />
+
+    <!--xacro:sensors cam_name="${name}"/-->
+
+    <!-- PARAMETERS -->
+    <xacro:property name="link_cam_mass" value="1.0" />
+    <xacro:property name="link_cam_x" value="0.0474" />
+    <xacro:property name="link_cam_y" value="0.157" />
+    <xacro:property name="link_cam_z" value="0.036" />
+    <xacro:property name="link_cam_rot_r" value="${-pi/2}" />
+    <xacro:property name="link_cam_pos_x" value="-0.0034" />
+    <xacro:property name="link_cam_pos_y" value="0.0" />
+    <xacro:property name="link_cam_pos_z" value="${link_cam_z/2}" />
+
+    <!-- CAMERA JOINT-->
+    <joint name="joint_${name}" type="fixed">
+        <parent link="${parent_link}"/>
+        <child link="link_${name}"/>
+        <xacro:insert_block name="origin_cam" />
+        <axis xyz="1 0 0" />
+    </joint>
+
+    <!-- CAMERA LINK -->
+    <link name="link_${name}">
+      <inertial>
+        <mass value="${link_cam_mass}"/>
+          <inertia
+              ixx="${link_cam_mass / 12.0 * (link_cam_y * link_cam_z / 2)}"
+              iyy="${link_cam_mass / 12.0 * (link_cam_x * link_cam_z / 2)}"
+              izz="${link_cam_mass / 12.0 * (link_cam_x * link_cam_y / 2)}"
+              ixy="0"
+              ixz="0"
+              iyz="0"/>
+      </inertial>
+
+      <collision>
+        <origin xyz="${link_cam_pos_x} ${link_cam_pos_y} ${link_cam_pos_z}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${link_cam_x} ${link_cam_y} ${link_cam_z}"/>
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="${link_cam_pos_x} ${link_cam_pos_y} ${link_cam_pos_z}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${link_cam_x} ${link_cam_y} ${link_cam_z}"/>
+        </geometry>
+      </visual>
+    </link>
+
+
+  </xacro:macro>
+</robot>

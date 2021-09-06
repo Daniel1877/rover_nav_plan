@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+  <xacro:macro name="gnss" params="parent_link *origin">
+    <xacro:include filename="$(find rover_config)/urdf/gnss.gazebo" />
+    
+    <joint name="joint_gnss" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="link_gnss"/>
+      <xacro:insert_block name="origin" />
+    </joint>
+
+    <!-- Model of Velodyne VLP-16 gnss -->
+    <link name="link_gnss">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.021" radius="0.0445"/>
+        </geometry>
+      </visual>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.021" radius="0.0445"/>
+        </geometry>
+      </visual>
+    </link>
+
+  </xacro:macro>
+</robot>
