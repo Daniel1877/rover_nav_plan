@@ -55,7 +55,7 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[
-          planning_dir + '/config/params.yaml',
+          planning_dir + '/config/params_mars.yaml',
           {
             'action_name': 'move',
             'bt_xml_file': planning_dir + '/behavior_trees_xml/move.xml'
@@ -69,7 +69,7 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[
-          planning_dir + '/config/params.yaml',
+          planning_dir + '/config/params_mars.yaml',
           {
             'action_name': 'recharge',
             'bt_xml_file': planning_dir + '/behavior_trees_xml/recharge.xml'
@@ -83,7 +83,7 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[
-          planning_dir + '/config/params.yaml',
+          planning_dir + '/config/params_mars.yaml',
           {
             'action_name': 'photo',
             'bt_xml_file': planning_dir + '/behavior_trees_xml/photo.xml'
@@ -97,12 +97,12 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[
-          planning_dir + '/config/params.yaml',
+          planning_dir + '/config/params_mars.yaml',
           {
             'action_name': 'record',
             'bt_xml_file': planning_dir + '/behavior_trees_xml/record.xml'
           }
-        ])        
+        ])
 
     calibration_cmd = Node(
         package='plansys2_bt_actions',
@@ -111,12 +111,12 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[
-          planning_dir + '/config/params.yaml',
+          planning_dir + '/config/params_mars.yaml',
           {
             'action_name': 'calibration',
             'bt_xml_file': planning_dir + '/behavior_trees_xml/calibration.xml'
           }
-        ]) 
+        ])
 
     '''photo_cmd = Node(
         package='rover_planning',

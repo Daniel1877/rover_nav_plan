@@ -19,16 +19,13 @@ def generate_launch_description():
     config_dir = get_package_share_directory('rover_config')
     navigation_dir = get_package_share_directory('rover_nav')
     worlds_dir = os.path.join(config_dir, 'worlds')
-    #pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
 
     #rviz_config= os.path.join(config_dir, 'rviz', 'marta.rviz')
     rviz_config= os.path.join(config_dir, 'rviz', 'nav2_default_view.rviz')
-        #rviz_config=os.path.join(get_package_share_directory('nav2_bringup'), 'rviz', 'nav2_default_view.rviz'),
 
     xacro_model = os.path.join(config_dir, 'urdf', 'marta.xacro')
     urdf_model_path, robot_desc = to_urdf(xacro_model)
 
-    #urdf_model = os.path.join(get_package_share_directory('turtlebot3_description'), 'urdf', 'turtlebot3_waffle.urdf')
 
     world = LaunchConfiguration('world')
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -46,9 +43,7 @@ def generate_launch_description():
 
     declare_world_cmd = DeclareLaunchArgument(
         'world',
-        #default_value=os.path.join(config_dir, 'worlds', 'tb3_world.model'),
-        default_value=os.path.join(config_dir, 'worlds', 'mars_walls.world'),
-        #default_value=os.path.join(config_dir, 'worlds', 'base.world'),
+        default_value=os.path.join(config_dir, 'worlds', 'mars2.world'),
         description='Full path to world model file to load')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -112,21 +107,6 @@ def generate_launch_description():
     remappings = [('/tf', 'tf'),
               ('/tf_static', 'tf_static')]
 
-
-    """start_gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(get_package_share_directory('gazebo_ros'), 'launch', 'gazebo.launch.py')),
-        launch_arguments={'gui': use_gazebo_gui,
-                          'server': use_simulator}.items() )
-                          #'world': world}.items() )
-    start_gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_gazebo_ros, 'launch', 'gazebo.launch.py'),
-        )
-    )
-    start_gazebo = ExecuteProcess(
-        cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_factory.so' ],
-        output='screen')"""
-
     start_gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(get_package_share_directory('gazebo_ros'), 'launch', 'gazebo.launch.py')),
         launch_arguments={'gui': use_gazebo_gui,
@@ -142,22 +122,16 @@ def generate_launch_description():
         arguments=['-entity',
                    'marta',
                    '-x', '-1.5', '-y', '0.5', '-z', '1',
-                   #'-x', '-6.0', '-y', '0.0', '-z', '1',
-                   #'-x', '0.0', '-y', '0.0', '-z', '1',
                    '-file', urdf_model_path,
-                   #'-file', urdf_model,
                    '-reference_frame', 'world']
     )
 
     start_robot_state_publisher_cmd = Node(
-        #condition=IfCondition(use_robot_state_pub),
         package='robot_state_publisher',
         executable='robot_state_publisher',
         name='robot_state_publisher',
-        #namespace=namespace,
         output='screen',
         parameters=[{'use_sim_time': use_sim_time}],
-        #parameters=[configured_params],
         remappings=[('/joint_states', '/joint_states')],
         arguments=[urdf_model_path]
     )
