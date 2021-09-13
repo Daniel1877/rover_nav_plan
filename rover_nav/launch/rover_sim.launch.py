@@ -43,7 +43,7 @@ def generate_launch_description():
 
     declare_world_cmd = DeclareLaunchArgument(
         'world',
-        default_value=os.path.join(config_dir, 'worlds', 'mars2.world'),
+        default_value=os.path.join(config_dir, 'worlds', 'mars3.world'),
         description='Full path to world model file to load')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
