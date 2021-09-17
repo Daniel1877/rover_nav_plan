@@ -35,8 +35,9 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return BT::PortsList({});
-  }
+    return {
+      BT::InputPort<std::string>("recharge_point")
+    };  }
 
 private:
   int counter_;

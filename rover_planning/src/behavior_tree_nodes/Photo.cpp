@@ -32,14 +32,10 @@ BT::NodeStatus
 Photo::tick()
 {
 
-  std::cout << "Photo tick " << counter_ << std::endl;
+  std::cout << "Photo in progress" << counter_ << std::endl;
 
   std::string camera;
   getInput<std::string>("camera", camera);
-
-  std::cout << "/"+camera+"/save" << std::endl;
-
-
 
   if (counter_++ < 10) {
     return BT::NodeStatus::RUNNING;
@@ -47,7 +43,6 @@ Photo::tick()
     counter_ = 0;
     
     client = node->create_client<std_srvs::srv::Empty>("/"+camera+"/save");
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Crea cliente.");
 
     while (!client->wait_for_service(1s)) {
       if (!rclcpp::ok()) {
@@ -58,10 +53,10 @@ Photo::tick()
     }
 
     auto request = std::make_shared<std_srvs::srv::Empty::Request>();
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Crea la solicitud.");
 
     auto result = client->async_send_request(request);
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Envía el resultado.");
+
+    std::cout << "Photography done with camera: " << camera << std::endl;
 
     return BT::NodeStatus::SUCCESS;
   }

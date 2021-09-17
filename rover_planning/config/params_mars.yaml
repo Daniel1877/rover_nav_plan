@@ -2,14 +2,13 @@ move:
   ros__parameters:
     plugins:
       - plansys2_move_bt_node
-    waypoints: ["punto1", "punto2", "punto3", "punto4", "punto5", "punto6"]
+    waypoints: ["point1", "point2", "point3", "point4", "point5"]
     waypoint_coords:
-      punto1: [0.0, -3.0, 0.0]
-      punto2: [4.0, -4.025, 0.0]
-      punto3: [-10.0, -5.5, 0.0]
-      punto4: [21.0, 0.0, 0.785398163]
-      punto5: [0.0, 8.0, 0.0]
-      punto6: [11.0, 13.0, -2.094395102]
+      point1: [0.0, -3.0, 0.785398163]
+      point2: [4.0, -4.025, 0.0]
+      point3: [-9.0, -5.5, 3.1415]
+      point4: [-21.0, 0.0, 0.785398163]
+      point5: [0.0, 8.0, -0.78]
 
 recharge:
   ros__parameters:

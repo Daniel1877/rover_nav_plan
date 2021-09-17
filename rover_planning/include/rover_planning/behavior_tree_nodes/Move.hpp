@@ -49,6 +49,7 @@ public:
 private:
   int goal_reached_;
   std::map<std::string, geometry_msgs::msg::Pose2D> waypoints_;
+  std::string goal;
 };
 
 }  // namespace plansys2_bt_tests

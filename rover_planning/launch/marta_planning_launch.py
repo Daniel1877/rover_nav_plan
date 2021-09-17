@@ -55,7 +55,7 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[
-          planning_dir + '/config/params_mars.yaml',
+          planning_dir + '/config/params.yaml',
           {
             'action_name': 'move',
             'bt_xml_file': planning_dir + '/behavior_trees_xml/move.xml'
@@ -69,7 +69,7 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[
-          planning_dir + '/config/params_mars.yaml',
+          planning_dir + '/config/params.yaml',
           {
             'action_name': 'recharge',
             'bt_xml_file': planning_dir + '/behavior_trees_xml/recharge.xml'
@@ -83,7 +83,7 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[
-          planning_dir + '/config/params_mars.yaml',
+          planning_dir + '/config/params.yaml',
           {
             'action_name': 'photo',
             'bt_xml_file': planning_dir + '/behavior_trees_xml/photo.xml'
@@ -97,7 +97,7 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[
-          planning_dir + '/config/params_mars.yaml',
+          planning_dir + '/config/params.yaml',
           {
             'action_name': 'record',
             'bt_xml_file': planning_dir + '/behavior_trees_xml/record.xml'
@@ -111,7 +111,7 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[
-          planning_dir + '/config/params_mars.yaml',
+          planning_dir + '/config/params.yaml',
           {
             'action_name': 'calibration',
             'bt_xml_file': planning_dir + '/behavior_trees_xml/calibration.xml'
@@ -138,8 +138,8 @@ def generate_launch_description():
                      'filename_format': "nav_cam%04i.%s"
                      }],
         remappings= [
-                      ('/nav_cam_depth/image', '/nav_cam_depth/image_raw')#,
-                      #('/camera_info', 'nav_cam_depth/camera_info')
+                      ('/nav_cam_depth/image', '/nav_cam_depth/image_raw'),
+                      ('/nav_cam_depth/camera_info', '/nav_cam_depth/camera_info')
                     ]
     )
 
@@ -153,8 +153,8 @@ def generate_launch_description():
                      'save_all_image': False,
                      'filename_format': "loc_cam%04i.%s"
                      }],
-        remappings=[('/loc_cam_depth/image', '/loc_cam_depth/image_raw')#,
-                    #('/camera_info', 'loc_cam_depth/camera_info')
+        remappings=[('/loc_cam_depth/image', '/loc_cam_depth/image_raw'),
+                    ('/loc_cam_depth/camera_info', '/loc_cam_depth/camera_info')
                     ]
     )
 

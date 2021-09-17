@@ -32,13 +32,16 @@ Recharge::Recharge(
 void
 Recharge::halt()
 {
-  std::cout << "Recharge halt" << std::endl;
+  std::cout << "Recharge complete" << std::endl;
 }
 
 BT::NodeStatus
 Recharge::tick()
 {
-  std::cout << "Recharge tick " << counter_ << std::endl;
+  std::string recharge_point;
+  getInput<std::string>("recharge_point", recharge_point);
+
+  std::cout << "Recharging on " << recharge_point << std::endl;
 
   if (counter_++ < 10) {
     return BT::NodeStatus::RUNNING;

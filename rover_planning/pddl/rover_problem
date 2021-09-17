@@ -1,68 +1,35 @@
+***********************************************************
+
+Final PDDL problem
+
+***********************************************************
+
 set instance point0 points
 set instance point1 points
 set instance point2 points
+set instance point3 points
+set instance point4 points
+set instance point5 points
+
 set instance marta rover
 set instance loc_cam_depth camera
 set instance nav_cam_depth camera
 
 set predicate (at point0)
+
 set predicate (move-possible point0 point1)
 set predicate (move-possible point1 point2)
+set predicate (move-possible point2 point3)
+set predicate (move-possible point3 point4)
+set predicate (move-possible point4 point5)
+
 set predicate (free marta)
 
 set function (= (distance point0 point1)10)
 set function (= (distance point1 point2)20)
-set function (= (battery marta) 20)
-set function (= (velocity marta) 2)
-set function (= (consum marta) 1)
-set function (= (capacity marta) 40)
-set function (= (recharge-rate marta) 2)
-set function (= (photo-energy marta) 5)
-
-set goal (and (photography point0 nav_cam_depth)(photography point0 loc_cam_depth))
-
-set goal (and (photography point0 nav_cam_depth)(photography point1 loc_cam_depth)(at point1))
-
-
-set goal (and (photography point0 nav_cam_depth)(at point2))
-
-
-
-***********************************************************
-
-Problema PDDL completo
-
-***********************************************************
-
-set instance punto0 points
-set instance punto1 points
-set instance punto2 points
-set instance punto3 points
-set instance punto4 points
-set instance punto5 points
-set instance punto6 points
-
-set instance marta rover
-set instance loc_cam_depth camera
-set instance nav_cam_depth camera
-
-set predicate (at punto0)
-
-set predicate (move-possible punto0 punto1)
-set predicate (move-possible punto1 punto2)
-set predicate (move-possible punto2 punto3)
-set predicate (move-possible punto3 punto4)
-set predicate (move-possible punto4 punto5)
-set predicate (move-possible punto5 punto6)
-
-set predicate (free marta)
-
-set function (= (distance punto0 punto1)10)
-set function (= (distance punto1 punto2)20)
-set function (= (distance punto2 punto3) 20)
-set function (= (distance punto3 punto4) 7)
-set function (= (distance punto4 punto5) 18)
-set function (= (distance punto5 punto6) 25)
+set function (= (distance point2 point3) 20)
+set function (= (distance point3 point4) 7)
+set function (= (distance point4 point5) 18)
 
 set function (= (battery marta) 20)
 set function (= (velocity marta) 2)
@@ -72,4 +39,42 @@ set function (= (recharge-rate marta) 2)
 set function (= (photo-energy marta) 5)
 set function (= (calibration-energy marta) 10)
 
-set goal (and (photography punto1 loc_cam_depth)(photography punto2 nav_cam_depth)(photography punto4 nav_cam_depth)(photography punto5 loc_cam_depth)(photography punto6 nav_cam_depth)(at punto6))
+set goal (and (photography point1 loc_cam_depth)(photography point2 nav_cam_depth)(photography point4 nav_cam_depth)(photography point5 loc_cam_depth)(at point5))
+
+
+***********************************************************
+
+PDDL problem to test obstacle detection during the planification tasks
+
+***********************************************************
+
+set instance point0 points
+set instance point1 points
+set instance point2 points
+set instance point3 points
+
+set instance marta rover
+set instance loc_cam_depth camera
+set instance nav_cam_depth camera
+
+set predicate (at point0)
+
+set predicate (move-possible point0 point1)
+set predicate (move-possible point1 point2)
+set predicate (move-possible point2 point3)
+
+set predicate (free marta)
+
+set function (= (distance point0 point1)10)
+set function (= (distance point1 point2)20)
+set function (= (distance point2 point3) 20)
+
+set function (= (battery marta) 40)
+set function (= (velocity marta) 2)
+set function (= (consum marta) 1)
+set function (= (capacity marta) 40)
+set function (= (recharge-rate marta) 2)
+set function (= (photo-energy marta) 5)
+set function (= (calibration-energy marta) 10)
+
+set goal (and (at point3))

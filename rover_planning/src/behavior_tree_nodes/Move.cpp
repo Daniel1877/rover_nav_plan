@@ -73,7 +73,6 @@ Move::Move(
 void
 Move::on_tick()
 {
-  std::string goal;
   getInput<std::string>("goal", goal);
 
   geometry_msgs::msg::Pose2D pose2nav;
@@ -92,14 +91,14 @@ Move::on_tick()
   goal_pos.pose.orientation = tf2::toMsg(tf2::Quaternion({0.0, 0.0, 1.0}, pose2nav.theta));
 
   goal_.pose = goal_pos;
-  std::cout << "Objetivo establecido" << std::endl;
+  std::cout << "Moving to " << goal << std::endl;
 
 }
 
 BT::NodeStatus
 Move::on_success()
 {
-  std::cout << "Éxito" << std::endl;
+  std::cout << "Arrival to " << goal << std::endl;
   return BT::NodeStatus::SUCCESS;
 }
 
